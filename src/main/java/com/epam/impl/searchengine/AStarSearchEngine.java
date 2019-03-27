@@ -12,6 +12,9 @@ public class AStarSearchEngine{
         if (routes == null || routes.isEmpty()) {
             throw new SearchEngineException("No search data!");
         }
+        if (costInterface == null) {
+            throw new SearchEngineException("No cost calculation function!");
+        }
 
         //set of all points
         Set<String> points = new HashSet<>();
