@@ -1,13 +1,15 @@
-package com.epam.impl.model;
+package com.epam.impl.model.entity;
 
-public class Route {
+import com.epam.impl.model.RouteInterface;
+
+public class RouteCost implements RouteInterface {
 
     private String pointFrom;
     private String pointTo;
     private int length;
     private int cost;
 
-    public Route(String pointFrom, String pointTo, int length, int cost) {
+    public RouteCost(String pointFrom, String pointTo, int length, int cost) {
         this.pointFrom = pointFrom;
         this.pointTo = pointTo;
         this.length = length;
@@ -28,10 +30,5 @@ public class Route {
 
     public int getCost() {
         return cost;
-    }
-
-    @Override
-    public String toString() {
-        return "Route{" + pointFrom + ", " + pointTo + ", " + length + ", " + cost + '}';
     }
 }

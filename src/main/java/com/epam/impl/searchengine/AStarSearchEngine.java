@@ -2,24 +2,13 @@ package com.epam.impl.searchengine;
 
 import com.epam.api.Path;
 import com.epam.impl.exception.SearchEngineException;
-import com.epam.impl.model.Route;
+import com.epam.impl.model.RouteInterface;
 
 import java.util.*;
 
-public class AStarSearchEngine implements SearchEngine{
+public class AStarSearchEngine{
 
-    private List<Route> routes;
-    private String pointA;
-    private String pointB;
-
-    public AStarSearchEngine(List<Route> routes, String pointA, String pointB) {
-        this.routes = routes;
-        this.pointA = pointA;
-        this.pointB = pointB;
-    }
-
-    @Override
-    public Path getBestPath() throws SearchEngineException {
+    public static <T extends RouteInterface> Path getBestPath(List<T> routes, String pointA, String pointB, CostInterface<T> costInterface) throws SearchEngineException {
         if (routes == null || routes.isEmpty()) {
             throw new SearchEngineException("No search data!");
         }
@@ -30,7 +19,7 @@ public class AStarSearchEngine implements SearchEngine{
         Map<String, Map<String, Integer>> neighbors = new HashMap<>();
         //fill set and map
         Map<String, Integer> neighborsMap;
-        for (Route route : routes) {
+        for (T route : routes) {
             points.add(route.getPointFrom());
             points.add(route.getPointTo());
 
@@ -38,7 +27,8 @@ public class AStarSearchEngine implements SearchEngine{
                 neighborsMap = neighbors.get(route.getPointFrom());
             else
                 neighborsMap = new HashMap<>();
-            neighborsMap.put(route.getPointTo(), route.getLength() * route.getCost());
+
+            neighborsMap.put(route.getPointTo(), costInterface.getCost(route));
             neighbors.put(route.getPointFrom(), neighborsMap);
         }
 
@@ -70,17 +60,14 @@ public class AStarSearchEngine implements SearchEngine{
 
             //path was found
             if (current.equals(pointB)) {
-                List<String> reverseTotalPath = new ArrayList<>();
-                reverseTotalPath.add(current);
+                List<String> totalPath = new ArrayList<>();
+                totalPath.add(current);
                 int totalCost = cost.get(current);
                 while (cameFrom.containsKey(current)) {
                     current = cameFrom.get(current);
-                    reverseTotalPath.add(current);
+                    totalPath.add(current);
                 }
-                List<String> totalPath = new ArrayList<>();
-                for (int i = reverseTotalPath.size()-1; i >= 0; i--) {
-                    totalPath.add(reverseTotalPath.get(i));
-                }
+                Collections.reverse(totalPath);
                 return new Path(totalPath, totalCost);
             }
 
@@ -110,4 +97,5 @@ public class AStarSearchEngine implements SearchEngine{
         //path not found
         throw new SearchEngineException("Path not found!");
     }
+
 }
